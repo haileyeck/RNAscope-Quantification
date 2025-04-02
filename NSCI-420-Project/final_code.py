@@ -19,11 +19,9 @@ ctcf_folder = '/Users/haileyeckersberg/syngap project test'
 output_folder = '/Users/haileyeckersberg/syngap project test output'
 output_folder_2 = '/Users/haileyeckersberg/syngap project test/greatest_ctcfs'
 
+# checks if your folders exists
 os.makedirs(output_folder, exist_ok=True)
 os.makedirs(output_folder_2, exist_ok=True)
-
-
-# checks if your input folder exists
 os.makedirs(raw_measurements_folder, exist_ok=True)
 
 # for this code to work, your files should be named based on the following scheme:
@@ -179,6 +177,11 @@ all_cells_df.to_csv(ctcf_csv_path, index=False)
 
 print(f"All cells' CTCF data saved to {ctcf_csv_path}.")
 
+###
+###
+# CHANGE NAMES OF THESE
+###
+###
             
 greatest_ctcf_ch2 = []
 greatest_ctcf_ch2_for_avg = 0
