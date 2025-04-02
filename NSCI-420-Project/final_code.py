@@ -8,21 +8,14 @@ import os
 import random
 
 # fill in the variables below with the path to each folder
-raw_measurements_folder = '/Users/haileyeckersberg/Desktop/syngap project'
-ctcf_folder = '/Users/haileyeckersberg/syngap project test'
-
-###
-###
-# CHANGE NAMES OF THESE
-###
-###
-output_folder = '/Users/haileyeckersberg/syngap project test output'
-output_folder_2 = '/Users/haileyeckersberg/syngap project test/greatest_ctcfs'
+raw_measurements_folder = '/Users/haileyeckersberg/zhou_lab_2025/syngap_project/measurement_csvs'
+ctcf_folder = '/Users/haileyeckersberg/zhou_lab_2025/syngap_project/test_syngap_quantification/ctcfs'
+output_folder = '/Users/haileyeckersberg/zhou_lab_2025/syngap_project/test_syngap_quantification/final_output'
 
 # checks if your folders exists
-os.makedirs(output_folder, exist_ok=True)
-os.makedirs(output_folder_2, exist_ok=True)
 os.makedirs(raw_measurements_folder, exist_ok=True)
+os.makedirs(ctcf_folder, exist_ok=True)
+os.makedirs(output_folder, exist_ok=True)
 
 # for this code to work, your files should be named based on the following scheme:
 # 1. each animal has a representative letter 
@@ -170,20 +163,22 @@ for animal in animals:
 
 #IF ONLY WANT POS CTCFs, CHANGE THIS
 all_cells_df = pd.DataFrame(all_cells_data)
+sorted_df_ch2 = all_cells_df.sort_values(by=["CTCF_Ch2"], ascending=False)
+sorted_df_ch3 = all_cells_df.sort_values(by=["CTCF_Ch3"], ascending=False)
 #all_cells_df = pd.DataFrame(all_cells_data_wo_neg)
+
+ctcf_csv_path = os.path.join(ctcf_folder, 'All_Cells_CTCF_sorted_ch2.csv')
+sorted_df_ch2.to_csv(ctcf_csv_path, index=False)
+ctcf_csv_path = os.path.join(ctcf_folder, 'All_Cells_CTCF_sorted_ch3.csv')
+sorted_df_ch3.to_csv(ctcf_csv_path, index=False)
 
 ctcf_csv_path = os.path.join(ctcf_folder, 'All_Cells_CTCF.csv')
 all_cells_df.to_csv(ctcf_csv_path, index=False)
 
 print(f"All cells' CTCF data saved to {ctcf_csv_path}.")
 
-###
-###
-# CHANGE NAMES OF THESE
-###
-###
-            
-greatest_ctcf_ch2 = []
+# NEXT:
+# finds greatest CTCF for Ch2 (Sacas9) in control animals
 greatest_ctcf_ch2_for_avg = 0
 total_images = 0
 
@@ -191,8 +186,6 @@ total_images = 0
 # will be used later in random sampling
 ctcf_ch3_controls = []
 
-# NEXT:
-# finds greatest CTCF for Ch2 (Sacas9) in control animals
 for animal in control:
     for slice_num in slices:
         image_num = 1
@@ -212,16 +205,15 @@ for animal in control:
                
                 # sort and append the greatest CH2 CTCF value
                 sorted_df_both = df_both.sort_values(by=["CTCF_Ch2"], ascending=False)
-                greatest_ctcf_ch2.append([identifier, sorted_df_both['CTCF_Ch2'].iloc[0]])
                 greatest_ctcf_ch2_for_avg += sorted_df_both['CTCF_Ch2'].iloc[0]
                 total_images += 1
 
                 # do i need to save this? 
-                # save sorted DataFrame
-                output_file2 = f"{output_folder}/CTCF_{identifier}_sorted_by_sacas9.csv"
-                sorted_df_both.to_csv(output_file2, index=False)
+                #greatest_ctcf_ch2.append([identifier, sorted_df_both['CTCF_Ch2'].iloc[0]])
+                #output_file2 = f"{output_folder}/CTCF_{identifier}_sorted_by_sacas9.csv"
+                #sorted_df_both.to_csv(output_file2, index=False)
                 
-                print(f"Processed and saved Ch2 CTCF sort data for {identifier}.")
+                print(f"Processed Ch2 CTCF sort data for {identifier}.")
 
             except FileNotFoundError:
                 break
@@ -233,9 +225,9 @@ for animal in control:
 #####
 # do i need this??? i don't think so...
 # save greatest CTCF values for channel 2
-greatest_ch2_ctcfs = pd.DataFrame(greatest_ctcf_ch2, columns=['Identifier', 'CTCF_Ch2'])
-greatest_ch2_ctcfs_file = f"{output_folder_2}/greatest_CTCF_Ch2.csv"
-greatest_ch2_ctcfs.to_csv(greatest_ch2_ctcfs_file, index=False)
+#greatest_ch2_ctcfs = pd.DataFrame(greatest_ctcf_ch2, columns=['Identifier', 'CTCF_Ch2'])
+#greatest_ch2_ctcfs_file = f"{output_folder_2}/greatest_CTCF_Ch2.csv"
+#greatest_ch2_ctcfs.to_csv(greatest_ch2_ctcfs_file, index=False)
 
 # compute average greatest Ch2 CTCF and set as Sacas9+ threshold
 avg_greatest_ch2_ctcf = greatest_ctcf_ch2_for_avg / total_images
@@ -284,6 +276,8 @@ for animal in treated:
 
 sample_size = min(len(ctcf_ch3_sacas9_positive), len(ctcf_ch3_sacas9_negative), len(ctcf_ch3_controls))
 
+random.seed(10)
+
 sampled_ctcf_ch3_sacas9_positive = random.sample(ctcf_ch3_sacas9_positive, sample_size)
 sampled_ctcf_ch3_sacas9_negative = random.sample(ctcf_ch3_sacas9_negative, sample_size)
 sampled_ctcf_ch3_controls = random.sample(ctcf_ch3_controls, sample_size)
@@ -291,8 +285,8 @@ sampled_ctcf_ch3_controls = random.sample(ctcf_ch3_controls, sample_size)
 
 
 final_data = {
-    'SaCas9+': sampled_ctcf_ch3_sacas9_positive,
-    'SaCas9-': sampled_ctcf_ch3_sacas9_negative,
+    'SaCas9 Positive': sampled_ctcf_ch3_sacas9_positive,
+    'SaCas9 Negative': sampled_ctcf_ch3_sacas9_negative,
     'Untreated': sampled_ctcf_ch3_controls
 }
 final_df = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in final_data.items()]))
