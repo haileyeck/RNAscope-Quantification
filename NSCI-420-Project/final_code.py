@@ -220,14 +220,6 @@ for animal in control:
             
             image_num += 1
 
-#####
-#####
-#####
-# do i need this??? i don't think so...
-# save greatest CTCF values for channel 2
-#greatest_ch2_ctcfs = pd.DataFrame(greatest_ctcf_ch2, columns=['Identifier', 'CTCF_Ch2'])
-#greatest_ch2_ctcfs_file = f"{output_folder_2}/greatest_CTCF_Ch2.csv"
-#greatest_ch2_ctcfs.to_csv(greatest_ch2_ctcfs_file, index=False)
 
 # compute average greatest Ch2 CTCF and set as Sacas9+ threshold
 avg_greatest_ch2_ctcf = greatest_ctcf_ch2_for_avg / total_images
