@@ -1,1 +1,7 @@
 This is the folder with code for my NSCI 420 project. 
+
+The file nsci_420_macro.ijm processes .czi files by detecting NEUN-positive cells using StarDist, then measuring signal intensities for each segmented cell in channels 2 and 3, and saving the results (including background measurements) into CSV files for input to the quantification program. It also saves the ROIs that StarDist created. 
+
+The file final_code.py processes the .csv files containing the measurements from the FIJI Macro described above. It begins by calculating the Channel 2 (Sacas9) and Channel 3 (Syngap1) CTCF for each cell segmented above. It will output several different files including CTCFs of Ch2 and Ch3 for each slice,  and a final file with randomly sampled cells from 3 groups (Sacas9+, Sacas9-, and Untreated), which can be used for statistical analysis. 
+
+For the treated mice, Sacas9+ and Sacas9- cells were categorized based on a threshold derived from untreated mouse brain images. The highest average CTCF value for Sacas9 in untreated tissue samples was set as the threshold for classifying cells. We then split the cells into categories: Sacas9+, Sacas9-, or untreated. For each group, an equal number of cells was randomly sampled, determined by the smallest group size (i.e., Sacas9+, Sacas9-, or untreated), and a file with the categorized randomly sampled Syngap1 CTCFs is returned.   
